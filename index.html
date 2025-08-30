@@ -1,0 +1,455 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>website_bu1lder</title>
+  <style>
+    :root{
+      --bg: #0f0f12;
+      --text: #eaeaf0;
+      --muted: #a6a8b3;
+      --brand: #36d7b7;
+      --brand-2: #6a8dff;
+      --card: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.12);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    body.dark{
+      --bg: #0b0c0f;
+      --text: #f5f7fb;
+      --muted: #aeb3c2;
+      --brand: #40e0d0;
+      --brand-2: #8aa2ff;
+      --card: rgba(255,255,255,0.08);
+      --card-border: rgba(255,255,255,0.2);
+    }/* Base */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial;
+  background: var(--bg);
+  color: var(--text);
+  line-height:1.6;
+  overflow-x:hidden;
+  scroll-behavior:smooth;
+}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* Navbar */
+header{
+  position:fixed; inset:0 0 auto 0; height:64px; z-index:1000;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; backdrop-filter: blur(12px);
+  background: color-mix(in oklab, var(--bg) 88%, black 12%);
+  border-bottom: 1px solid var(--card-border);
+}
+.brand{font-weight:800; letter-spacing:.5px; display:flex; align-items:center; gap:10px}
+.brand .dot{width:10px; height:10px; border-radius:999px; background:linear-gradient(135deg,var(--brand),var(--brand-2)); box-shadow:0 0 14px var(--brand)}
+nav{display:flex; align-items:center; gap:18px}
+nav a{opacity:.85; position:relative; padding:6px 2px}
+nav a.active::after{content:""; position:absolute; left:0; right:0; bottom:-6px; height:3px; border-radius:4px; background:linear-gradient(90deg,var(--brand),var(--brand-2))}
+.toggle{margin-left:8px; border:1px solid var(--card-border); background:var(--card); color:var(--text); height:36px; padding:0 12px; border-radius:999px; cursor:pointer}
+
+/* Sections */
+section{padding:100px 20px; min-height:100vh}
+.container{max-width:1150px; margin:0 auto}
+h2.section-title{font-size:clamp(28px,3.6vw,44px); margin:0 0 12px}
+p.section-sub{color:var(--muted); margin:0 0 30px}
+
+/* Hero */
+.hero{position:relative; display:flex; align-items:center; justify-content:center; padding-top:64px}
+.hero .canvas-wrap{position:absolute; inset:0; z-index:0}
+#particles{position:absolute; inset:0}
+.hero-inner{position:relative; z-index:1; text-align:center; padding:80px 0}
+.hero h1{font-size:clamp(36px,6.5vw,72px); line-height:1.05; margin:0 0 14px}
+.grad{background:linear-gradient(90deg,var(--brand),var(--brand-2)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.hero p{max-width:760px; margin:0 auto 24px; color:var(--muted); font-size:clamp(16px,2.2vw,18px)}
+.cta{display:inline-flex; align-items:center; gap:10px; background: linear-gradient(90deg,var(--brand),var(--brand-2)); color:#0b0c0f; border:0; padding:12px 18px; border-radius:999px; font-weight:700; box-shadow: var(--shadow); cursor:pointer}
+
+/* Cursor */
+.cursor{position:fixed; top:0; left:0; width:18px; height:18px; border-radius:50%; pointer-events:none; z-index:2000; mix-blend-mode: difference; background:#fff; opacity:.9; transform:translate(-50%,-50%)}
+
+/* Reveal animations */
+.reveal{opacity:0; transform: translateY(24px); transition: .7s ease}
+.reveal.visible{opacity:1; transform:none}
+
+/* About: glass + tilt */
+.cards{display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap:16px}
+.card{background: var(--card); border:1px solid var(--card-border); border-radius:16px; padding:22px; box-shadow: var(--shadow); transform-style:preserve-3d; will-change: transform}
+.card h3{margin:4px 0 8px}
+.tilt{transition: transform .15s ease}
+
+/* Services / Portfolio */
+.grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap:18px}
+.tile{position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--card-border); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); box-shadow: var(--shadow)}
+.tile .inner{padding:24px}
+.tile:hover .shine{opacity:1; transform: translate(-50%,-50%) rotate(25deg)}
+.shine{position:absolute; top:-20%; left:120%; width:140%; height:200%; background:linear-gradient(120deg, rgba(255,255,255,.15), rgba(255,255,255,0)); filter: blur(8px); opacity:0; transition:.5s}
+
+/* Stats counters */
+.stats{display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:16px; margin-top:18px}
+.stat{background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:20px; text-align:center}
+.stat .num{font-size:clamp(28px,4.2vw,40px); font-weight:800; background:linear-gradient(90deg,var(--brand),var(--brand-2)); -webkit-background-clip:text; color:transparent}
+
+/* Testimonials slider */
+.slider{position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--card-border); background:var(--card)}
+.slides{display:flex; transition:transform .5s ease}
+.slide{flex:0 0 100%; padding:28px; min-height:180px}
+.dots{display:flex; gap:8px; justify-content:center; padding:14px}
+.dot{width:10px; height:10px; border-radius:999px; background:rgba(255,255,255,.25); border:1px solid var(--card-border); cursor:pointer}
+.dot.active{background:linear-gradient(90deg,var(--brand),var(--brand-2))}
+.slider .nav{position:absolute; top:50%; transform:translateY(-50%); width:100%; display:flex; justify-content:space-between; padding:0 10px}
+.slider button{background:var(--card); border:1px solid var(--card-border); color:var(--text); border-radius:10px; padding:8px 10px; cursor:pointer}
+
+/* Contact */
+form{display:grid; gap:12px; max-width:720px; margin:0 auto}
+input, textarea{background:var(--card); border:1px solid var(--card-border); border-radius:12px; padding:12px; color:var(--text)}
+textarea{min-height:120px; resize:vertical}
+.error{color:#ff7a7a; font-size:14px}
+
+/* Footer */
+footer{border-top:1px solid var(--card-border); background: color-mix(in oklab, var(--bg) 92%, black 8%); padding:26px 20px; text-align:center}
+.social{display:flex; gap:12px; justify-content:center; margin-top:8px}
+.social a{width:36px; height:36px; display:grid; place-items:center; border-radius:10px; background:var(--card); border:1px solid var(--card-border)}
+
+/* Utility */
+.muted{color:var(--muted)}
+.mt-20{margin-top:20px}
+.mt-40{margin-top:40px}
+.btn{display:inline-flex; align-items:center; gap:8px; background:linear-gradient(90deg,var(--brand),var(--brand-2)); color:#0b0c0f; padding:10px 16px; border-radius:999px; font-weight:700; border:0; cursor:pointer}
+
+/* Page fade-in */
+body{opacity:0; animation:fadeIn .5s ease forwards}
+@keyframes fadeIn{to{opacity:1}}
+
+@media (max-width:720px){
+  nav{gap:12px}
+  .cta{width:100%; justify-content:center}
+}
+
+  </style>
+</head>
+<body>
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>  <!-- Navbar -->  <header>
+    <div class="brand"><span class="dot"></span> website_bu1lder</div>
+    <nav>
+      <a href="#home" class="active">Home</a>
+      <a href="#about">About</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#stats">Stats</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#contact">Contact</a>
+      <button class="toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+    </nav>
+  </header>  <!-- Hero -->  <section id="home" class="hero">
+    <div class="canvas-wrap"><canvas id="particles"></canvas></div>
+    <div class="hero-inner container">
+      <h1 class="reveal">Build <span class="grad">Modern Websites</span> that Shine ✨</h1>
+      <p class="reveal" style="transition-delay:.08s">Welcome to <b>website_bu1lder</b> — clean code, premium motion, and delightful UX. Pure HTML + CSS + JavaScript.</p>
+      <button class="cta reveal" style="transition-delay:.16s" onclick="document.querySelector('#portfolio').scrollIntoView({behavior:'smooth'})">Explore Portfolio</button>
+    </div>
+  </section>  <!-- About -->  <section id="about">
+    <div class="container">
+      <h2 class="section-title reveal">About Us</h2>
+      <p class="section-sub reveal">We craft fast, responsive, and animated experiences with accessible, semantic code.</p>
+      <div class="cards mt-20">
+        <div class="card tilt reveal">
+          <h3>Performance First</h3>
+          <p class="muted">Lighthouse-friendly builds, image optimization, and clean bundles.</p>
+        </div>
+        <div class="card tilt reveal" style="transition-delay:.06s">
+          <h3>Motion Design</h3>
+          <p class="muted">Tasteful micro‑interactions and scroll reveals to guide attention.</p>
+        </div>
+        <div class="card tilt reveal" style="transition-delay:.12s">
+          <h3>Scalable UI</h3>
+          <p class="muted">Component-driven structure with modern CSS features.</p>
+        </div>
+        <div class="card tilt reveal" style="transition-delay:.18s">
+          <h3>SEO & A11y</h3>
+          <p class="muted">Semantic HTML, metadata, and keyboard‑friendly controls.</p>
+        </div>
+      </div>
+    </div>
+  </section>  <!-- Portfolio / Services -->  <section id="portfolio">
+    <div class="container">
+      <h2 class="section-title reveal">Portfolio</h2>
+      <p class="section-sub reveal">A showcase of clean layouts, gradients, and glassmorphism.</p>
+      <div class="grid mt-20">
+        <article class="tile reveal">
+          <div class="shine"></div>
+          <div class="inner">
+            <h3>Landing Page</h3>
+            <p class="muted">Hero animations, CTA focus, and conversion‑ready sections.</p>
+          </div>
+        </article>
+        <article class="tile reveal" style="transition-delay:.06s">
+          <div class="shine"></div>
+          <div class="inner">
+            <h3>Dashboard UI</h3>
+            <p class="muted">Cards, charts, and data density with clarity.</p>
+          </div>
+        </article>
+        <article class="tile reveal" style="transition-delay:.12s">
+          <div class="shine"></div>
+          <div class="inner">
+            <h3>E‑commerce</h3>
+            <p class="muted">Snappy filters, product galleries, and checkout polish.</p>
+          </div>
+        </article>
+        <article class="tile reveal" style="transition-delay:.18s">
+          <div class="shine"></div>
+          <div class="inner">
+            <h3>Portfolio Site</h3>
+            <p class="muted">Case studies with scroll narrative and media embeds.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>  <!-- Stats -->  <section id="stats">
+    <div class="container">
+      <h2 class="section-title reveal">By the Numbers</h2>
+      <p class="section-sub reveal">Some fun metrics that tick up as you scroll.</p>
+      <div class="stats">
+        <div class="stat reveal"><div class="num" data-count="120">0</div><div class="muted">Projects</div></div>
+        <div class="stat reveal" style="transition-delay:.06s"><div class="num" data-count="98">0</div><div class="muted">Happy Clients</div></div>
+        <div class="stat reveal" style="transition-delay:.12s"><div class="num" data-count="5">0</div><div class="muted">Avg. Days/Project</div></div>
+        <div class="stat reveal" style="transition-delay:.18s"><div class="num" data-count="24">0</div><div class="muted">Awards</div></div>
+      </div>
+    </div>
+  </section>  <!-- Testimonials -->  <section id="testimonials">
+    <div class="container">
+      <h2 class="section-title reveal">Testimonials</h2>
+      <p class="section-sub reveal">What clients say about website_bu1lder</p>
+      <div class="slider mt-20 reveal">
+        <div class="slides" id="slides">
+          <div class="slide">“Pixel‑perfect and blazing fast. Our conversions jumped immediately.” — <b>Anika, D2C Founder</b></div>
+          <div class="slide">“Loved the animations. Subtle, classy, and purposeful.” — <b>Rahul, Product Lead</b></div>
+          <div class="slide">“Clean code + great communication. Will hire again.” — <b>Sara, Agency Owner</b></div>
+        </div>
+        <div class="nav">
+          <button id="prev" aria-label="Previous">◀</button>
+          <button id="next" aria-label="Next">▶</button>
+        </div>
+      </div>
+      <div class="dots" id="dots"></div>
+    </div>
+  </section>  <!-- Contact -->  <section id="contact">
+    <div class="container">
+      <h2 class="section-title reveal">Contact</h2>
+      <p class="section-sub reveal">Tell us about your project. We'll reply within 24 hours.</p>
+    <form id="supportForm">
+    <input type="text" name="name" placeholder="Your Name" required><br>
+    <input type="text" name="whatsapp" placeholder="WhatsApp Number" required><br>
+    <input type="email" name="email" placeholder="Your Email" required><br>
+    <textarea name="message" placeholder="Your Message" required></textarea><br>
+    <button type="submit">Send</button>
+  </form>
+
+    </div>
+  </section>  <footer>
+    <div>© 2025 <b>website_bu1lder</b> — Crafted with ♥ in pure HTML, CSS & JS</div>
+    <div class="social">
+      <a href="#" aria-label="Twitter">𝕏</a>
+      <a href="#" aria-label="GitHub">🐱</a>
+      <a href="#" aria-label="LinkedIn">in</a>
+    </div>
+  </footer>  <script>
+    // =========================
+    // Theme Toggle (with save)
+    // =========================
+    const themeBtn = document.getElementById('themeToggle');
+    const savedTheme = localStorage.getItem('wb_theme');
+    if(savedTheme === 'dark') document.body.classList.add('dark');
+    themeBtn.textContent = document.body.classList.contains('dark') ? '☀' : '🌙';
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('wb_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+      themeBtn.textContent = document.body.classList.contains('dark') ? '☀' : '🌙';
+    });
+
+    // =========================
+    // Active nav link on scroll
+    // =========================
+    const links = [...document.querySelectorAll('nav a')];
+    const sections = links.map(a => document.querySelector(a.getAttribute('href')));
+    const setActive = () => {
+      const pos = window.scrollY + 80;
+      sections.forEach((sec,i)=>{
+        if(!sec) return; const top = sec.offsetTop; const bottom = top + sec.offsetHeight;
+        if(pos >= top && pos < bottom){ links.forEach(l=>l.classList.remove('active')); links[i].classList.add('active'); }
+      });
+    };
+    window.addEventListener('scroll', setActive); setActive();
+
+    // =========================
+    // Custom cursor
+    // =========================
+    const cursor = document.getElementById('cursor');
+    window.addEventListener('mousemove', (e)=>{
+      cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    });
+
+    // =========================
+    // Scroll reveal animations
+    // =========================
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('visible'); io.unobserve(en.target);} });
+    },{threshold:0.14});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    // =========================
+    // Tilt cards
+    // =========================
+    function addTilt(el){
+      const rect = ()=> el.getBoundingClientRect();
+      el.addEventListener('mousemove', (e)=>{
+        const r = rect(); const x = e.clientX - r.left; const y = e.clientY - r.top;
+        const rx = ((y / r.height) - 0.5) * -10; // rotateX
+        const ry = ((x / r.width) - 0.5) * 10;   // rotateY
+        el.style.transform = perspective`(700px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      });
+      el.addEventListener('mouseleave', ()=>{ el.style.transform = 'perspective(700px) rotateX(0) rotateY(0)'; });
+    }
+    document.querySelectorAll('.tilt').forEach(addTilt);
+
+    // =========================
+    // Counters
+    // =========================
+    const counters = document.querySelectorAll('.num');
+    const counterIO = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(!en.isIntersecting) return;
+        const el = en.target; const target = +el.getAttribute('data-count');
+        const start = performance.now(); const dur = 1200 + Math.random()*600;
+        const step = (t)=>{
+          const p = Math.min(1, (t - start)/dur);
+          el.textContent = Math.floor(target * p).toLocaleString();
+          if(p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+        counterIO.unobserve(el);
+      });
+    },{threshold:0.4});
+    counters.forEach(el=>counterIO.observe(el));
+
+    // =========================
+    // Testimonials slider
+    // =========================
+    const slides = document.getElementById('slides');
+    const dotWrap = document.getElementById('dots');
+    const slideCount = slides.children.length; let idx = 0; let auto;
+    function renderDots(){
+      dotWrap.innerHTML='';
+      for(let i=0;i<slideCount;i++){ const d=document.createElement('div'); d.className='dot'+(i===idx?' active':''); d.addEventListener('click',()=>go(i)); dotWrap.appendChild(d);} }
+    function go(n) {
+  idx = (n + slideCount) % slideCount;
+  slides.style.transform = `translateX(-${idx * 100}%)`;
+  renderDots();
+}
+
+    function play(){ auto=setInterval(()=>go(idx+1), 4000); }
+    function stop(){ clearInterval(auto); }
+    document.getElementById('prev').onclick=()=>{stop(); go(idx-1); play();};
+    document.getElementById('next').onclick=()=>{stop(); go(idx+1); play();};
+    slides.addEventListener('pointerenter', stop); slides.addEventListener('pointerleave', play);
+    renderDots(); play();
+
+    // =========================
+    // Contact form validation
+    // =========================
+    document.getElementById("supportForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = {
+    name: e.target.name.value,
+    whatsapp: e.target.whatsapp.value,
+    email: e.target.email.value,
+    message: e.target.message.value,
+  };
+
+  try {
+
+
+    const res = await fetch("http://localhost:5000/api/wallet/support/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+    alert(data.msg || data.error);
+  } catch (err) {
+    alert("❌ Failed to send request");
+  }
+});
+
+
+
+    // =========================
+    // Particle background (pure canvas)
+    // =========================
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles, mouse = {x:0,y:0,active:false};
+    const DPR = Math.min(2, window.devicePixelRatio || 1);
+
+    function resize(){
+      const rect = canvas.getBoundingClientRect();
+      W = rect.width; H = rect.height; canvas.width = W * DPR; canvas.height = H * DPR; ctx.scale(DPR,DPR);
+    }
+    const PCOUNT = 70; const SPEED = .4; const LINK = 110; // px
+    function makeParticles(){
+      particles = Array.from({length:PCOUNT}, ()=>({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        vx: (Math.random()-.5)*SPEED,
+        vy: (Math.random()-.5)*SPEED,
+        r: 2 + Math.random()*1.5
+      }));
+    }
+
+    function step(){
+      ctx.clearRect(0,0,W,H);
+      // gentle parallax shift based on scroll
+      const sy = window.scrollY * 0.05;
+      particles.forEach(p=>{
+        p.x += p.vx; p.y += p.vy;
+        if(p.x<0||p.x>W) p.vx*=-1; if(p.y<0||p.y>H) p.vy*=-1;
+        // mouse repulse
+        if(mouse.active){
+          const dx = p.x - mouse.x; const dy = p.y - mouse.y; const d = Math.hypot(dx,dy);
+          if(d<90){ p.vx += dx/(d+0.1)*0.02; p.vy += dy/(d+0.1)*0.02; }
+        }
+      });
+      // draw links
+      for(let i=0;i<particles.length;i++){
+        const a = particles[i];
+        for(let j=i+1;j<particles.length;j++){
+          const b = particles[j];
+          const dx=a.x-b.x, dy=a.y-b.y; const d=Math.hypot(dx,dy);
+          if(d<LINK){ ctx.beginPath(); ctx.globalAlpha = 1 - d/LINK; ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text'); ctx.lineWidth = 0.6; ctx.moveTo(a.x, a.y+sy); ctx.lineTo(b.x, b.y+sy); ctx.stroke(); }
+        }
+      }
+      // draw dots
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text');
+      particles.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x, p.y+sy, p.r, 0, Math.PI*2); ctx.fill(); });
+      requestAnimationFrame(step);
+    }
+
+    function initParticles(){ resize(); makeParticles(); step(); }
+    const hero = document.querySelector('.hero');
+    const obs = new ResizeObserver(()=>resize()); obs.observe(hero);
+    canvas.addEventListener('mousemove', (e)=>{ const r = canvas.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.active=true; });
+    canvas.addEventListener('mouseleave', ()=>{ mouse.active=false; });
+    initParticles();
+
+    
+
+
+  </script></body>
+</html>
